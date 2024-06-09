@@ -18,7 +18,7 @@ fun main() {
     )
     val random12Mnemonic = "cage mix correct shop shy escape broccoli rug crucial share"
     log.info("新生成的助记词：" + random12Mnemonic)
-    val apiMnemonic =Web3Utils.loadWalletByMnemonic(random12Mnemonic)
+    val apiMnemonic = Web3Utils.loadWalletByMnemonic(random12Mnemonic)
     log.info("根据助记词生成钱包：" + apiMnemonic)
     val balanceList = web3ObjList.map {
         Web3Utils.getBalanceOfContract(it, apiMnemonic.address)
@@ -36,9 +36,10 @@ object Web3MnemonicUtils {
         val populateWordList = populateWordList()
         val mnemonicListInFileCache = FileUtilsWrapper.getMnemonicListInFileCache()
         MNEMONIC_LIST.addAll(populateWordList)
+        val beginTS = System.currentTimeMillis()
         hasUsedMnemonicList.add(FileUtilsWrapper.getMnemonicListInFileCache())
         log.info("原始助记词列表：大小：${populateWordList.size},单词：$populateWordList")
-        log.info("已经存在的助记词列表大小：" + mnemonicListInFileCache.size)
+        log.info("已经存在的助记词列表大小：${mnemonicListInFileCache.size},加载耗时：${System.currentTimeMillis() - beginTS}ms")
     }
 
     fun getRandom12MnemonicListByBlank(size: Int): List<String> {

@@ -15,8 +15,10 @@ fun main(args: Array<String>) {
 
 class FindGoldOnWeb3 {
     fun run(size: Int, web3j: List<Web3j>? = null) {
+        val beginTS=System.currentTimeMillis()
         //助记词列表
         val random12MnemonicListByBlank = Web3MnemonicUtils.getRandom12MnemonicListByBlank(size)
+        log.info("生成不重复助记词耗时(${size}个)："+(System.currentTimeMillis()-beginTS)+"ms")
         //web3实例
         val web3ObjList = web3j ?: listOf(
             Web3Utils.getEthWeb3Obj(),
