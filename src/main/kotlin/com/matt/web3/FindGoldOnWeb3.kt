@@ -4,21 +4,22 @@ import com.matt.web3.utils.FileUtilsWrapper
 import com.matt.web3.utils.Web3MnemonicUtils
 import com.matt.web3.utils.Web3Utils
 import com.matt.web3.utils.XFormatUtil
+import com.matt.web3.utils.blankj.TimeConstants
 import log
 import org.web3j.protocol.Web3j
 
 
 fun main(args: Array<String>) {
-    log.info(args.toString())
-    FindGoldOnWeb3().run(10000)
+    log.info(args.toList().toString())
+    FindGoldOnWeb3().run(1000)
 }
 
 class FindGoldOnWeb3 {
     fun run(size: Int, web3j: List<Web3j>? = null) {
-        val beginTS=System.currentTimeMillis()
+        val beginTS = System.currentTimeMillis()
         //助记词列表
         val random12MnemonicListByBlank = Web3MnemonicUtils.getRandom12MnemonicListByBlank(size)
-        log.info("生成不重复助记词耗时(${size}个)："+(System.currentTimeMillis()-beginTS)+"ms")
+        log.info("生成不重复助记词耗时(${size}个)：" + (System.currentTimeMillis() - beginTS) + "ms")
         //web3实例
         val web3ObjList = web3j ?: listOf(
             Web3Utils.getEthWeb3Obj(),
@@ -46,5 +47,8 @@ class FindGoldOnWeb3 {
             //将查询过的助记词持久化
             FileUtilsWrapper.updateMnemonicList2MnemonicFile(listOf(it))
         }
+        val len = System.currentTimeMillis() - beginTS
+        val min = len / TimeConstants.MIN
+        log.info("总耗时：${len}ms≈${min}分钟")
     }
 }
