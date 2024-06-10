@@ -11,7 +11,7 @@ import org.web3j.protocol.Web3j
 
 fun main(args: Array<String>) {
     log.info(args.toList().toString())
-    FindGoldOnWeb3().run(1000)
+    FindGoldOnWeb3().run(10000)
 }
 
 class FindGoldOnWeb3 {
