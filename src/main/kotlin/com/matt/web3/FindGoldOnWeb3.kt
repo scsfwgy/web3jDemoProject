@@ -20,20 +20,25 @@ class FindGoldOnWeb3 {
         //助记词列表
         val random12MnemonicListByBlank = Web3MnemonicUtils.getRandom12MnemonicListByBlank(size)
         log.info("生成不重复助记词耗时(${size}个)：" + (System.currentTimeMillis() - beginTS) + "ms")
+
+        val beginTS2 = System.currentTimeMillis()
+        val walletList = random12MnemonicListByBlank.map { Web3Utils.loadWalletByMnemonic(it) }
+        log.info("助记词转地址耗时(${size}个)：" + (System.currentTimeMillis() - beginTS2) + "ms")
+
         //web3实例
         val web3ObjList = web3j ?: listOf(
             Web3Utils.getEthWeb3Obj(),
             Web3Utils.getBscWeb3Obj()
         )
         var findGoldSize = 0
-        val totalSize = random12MnemonicListByBlank.size
-        random12MnemonicListByBlank.forEachIndexed { index, it ->
+        val totalSize = walletList.size
+        walletList.forEachIndexed { index, apiMnemonic ->
+            val mnemonic = apiMnemonic.mnemonic
             val currentCount = index + 1
             val percent = currentCount * 1.0 / totalSize * 100
             val show = "$currentCount/${totalSize}"
             val percentFormat = XFormatUtil.globalFormat(percent, 2) + "%"
-            val apiMnemonic = Web3Utils.loadWalletByMnemonic(it)
-            log.info("根据助记词生成钱包（进度${show}=${percentFormat},gold:${findGoldSize}）：助记词：$it，对应钱包：${apiMnemonic.address}")
+            log.info("根据助记词生成钱包（进度${show}=${percentFormat},gold:${findGoldSize}）：助记词：${mnemonic}，对应钱包：${apiMnemonic.address}")
             val balanceList = web3ObjList.map {
                 Web3Utils.getBalanceOfContract(it, apiMnemonic.address)
             }.filter { it != "0" }
@@ -45,7 +50,7 @@ class FindGoldOnWeb3 {
                 findGoldSize++
             }
             //将查询过的助记词持久化
-            FileUtilsWrapper.updateMnemonicList2MnemonicFile(listOf(it))
+            FileUtilsWrapper.updateMnemonicList2MnemonicFile(listOf(mnemonic))
         }
         val len = System.currentTimeMillis() - beginTS
         val min = len / TimeConstants.MIN
